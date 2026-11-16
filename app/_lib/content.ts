@@ -191,6 +191,7 @@ export const FORM = {
     last: "Last name",
     phone: "Phone number",
     email: "Email",
+    organization: "Organization (optional)",
     message: "Message",
   },
   submit: "Submit",

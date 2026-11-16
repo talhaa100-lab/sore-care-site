@@ -13,6 +13,7 @@ import {
   type ReactNode,
 } from "react";
 import { FORM, PHONE_DISPLAY, PHONE_HREF } from "../_lib/content";
+import { isValidPhone, PARTNER_LIMITS, PHONE_ERROR, type InquiryType } from "../_lib/partnership";
 
 export type QualifyOptions = {
   /** Dialog heading. Defaults to "See if you qualify". */
@@ -21,10 +22,24 @@ export type QualifyOptions = {
   image?: string;
   /**
    * Where the submission goes. "crm" (default) posts to the Sora Care CRM;
-   * "email" sends a notification email (used by the partnership dialogs).
+   * "partnership" posts to /api/partnership, which emails the partnerships inbox
+   * (used by the partnership dialogs, and adds an Organization field).
    */
-  channel?: "crm" | "email";
+  channel?: "crm" | "partnership";
+  /** Partnership dialogs only: what the visitor is asking for (shown in the email subject). */
+  inquiryType?: InquiryType;
+  /** Short note shown above the submit button, e.g. a privacy reminder. */
+  note?: string;
 };
+
+/** RFC 4122 v4 id. randomUUID needs a secure context, so keep a fallback. */
+function newKey() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") return crypto.randomUUID();
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
 
 type QualifyContextValue = { open: (options?: QualifyOptions) => void };
 
@@ -51,8 +66,11 @@ export function QualifyProvider({
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [options, setOptions] = useState<QualifyOptions>({});
+  // One Idempotency-Key per submission: kept for retries of the same content, replaced when it changes.
+  const attempt = useRef<{ key: string; body: string } | null>(null);
 
   const open = useCallback((next?: QualifyOptions) => {
+    attempt.current = null;
     setSent(false);
     setSending(false);
     setError("");
@@ -75,33 +93,53 @@ export function QualifyProvider({
 
   const photo = options.image ?? image;
   const title = options.title ?? FORM.title;
+  const partnershipForm = options.channel === "partnership";
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (sending) return;
     const data = new FormData(e.currentTarget);
+    const partnership = options.channel === "partnership";
+
+    if (partnership && !isValidPhone(String(data.get("phone") ?? ""))) {
+      setError(PHONE_ERROR);
+      return;
+    }
+
+    const fields: Record<string, unknown> = {
+      first: data.get("first"),
+      last: data.get("last"),
+      phone: data.get("phone"),
+      email: data.get("email"),
+      message: data.get("message"),
+      company: data.get("company"), // honeypot
+      source: title,
+      page: window.location.pathname,
+    };
+    if (partnership) {
+      fields.organization = data.get("organization");
+      fields.inquiryType = options.inquiryType;
+      // Same content as the last attempt: reuse the key so a retry can't send twice.
+      // Edited content: a new key, otherwise the API answers 409.
+      const content = JSON.stringify(fields);
+      if (attempt.current?.body !== content) attempt.current = { key: newKey(), body: content };
+      fields.idempotencyKey = attempt.current.key;
+    }
+
     setSending(true);
     setError("");
     try {
-      const res = await fetch(options.channel === "email" ? "/api/lead" : "/api/crm-lead", {
+      const res = await fetch(partnership ? "/api/partnership" : "/api/crm-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          first: data.get("first"),
-          last: data.get("last"),
-          phone: data.get("phone"),
-          email: data.get("email"),
-          message: data.get("message"),
-          company: data.get("company"), // honeypot
-          source: title,
-          page: window.location.pathname,
-        }),
+        body: JSON.stringify(fields),
       });
       const result = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
       if (!res.ok || !result?.ok) {
         setError(result?.error ?? "Something went wrong. Please try again.");
         return;
       }
+      attempt.current = null;
       setSent(true);
     } catch {
       setError("We couldn’t reach the server. Please check your connection and try again.");
@@ -162,29 +200,67 @@ export function QualifyProvider({
                 <div className="form__row">
                   <label className="field">
                     <span>{FORM.fields.first}</span>
-                    <input name="first" type="text" autoComplete="given-name" required />
+                    <input
+                      name="first"
+                      type="text"
+                      autoComplete="given-name"
+                      maxLength={partnershipForm ? PARTNER_LIMITS.first : undefined}
+                      required
+                    />
                   </label>
                   <label className="field">
                     <span>{FORM.fields.last}</span>
-                    <input name="last" type="text" autoComplete="family-name" required />
+                    <input
+                      name="last"
+                      type="text"
+                      autoComplete="family-name"
+                      maxLength={partnershipForm ? PARTNER_LIMITS.last : undefined}
+                      required
+                    />
                   </label>
                 </div>
 
                 <div className="form__row">
                   <label className="field">
                     <span>{FORM.fields.phone}</span>
-                    <input name="phone" type="tel" autoComplete="tel" required />
+                    <input
+                      name="phone"
+                      type="tel"
+                      autoComplete="tel"
+                      maxLength={partnershipForm ? PARTNER_LIMITS.phone : undefined}
+                      required
+                    />
                   </label>
                   <label className="field">
                     <span>{FORM.fields.email}</span>
-                    <input name="email" type="email" autoComplete="email" required />
+                    <input
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      maxLength={partnershipForm ? PARTNER_LIMITS.email : undefined}
+                      required
+                    />
                   </label>
                 </div>
 
+                {partnershipForm ? (
+                  <label className="field">
+                    <span>{FORM.fields.organization}</span>
+                    <input
+                      name="organization"
+                      type="text"
+                      autoComplete="organization"
+                      maxLength={PARTNER_LIMITS.organization}
+                    />
+                  </label>
+                ) : null}
+
                 <label className="field">
                   <span>{FORM.fields.message}</span>
-                  <textarea name="message" rows={3} />
+                  <textarea name="message" rows={3} maxLength={partnershipForm ? PARTNER_LIMITS.message : undefined} />
                 </label>
+
+                {options.note ? <p className="form__note">{options.note}</p> : null}
 
                 {/* honeypot: hidden from people, tempting for bots */}
                 <input

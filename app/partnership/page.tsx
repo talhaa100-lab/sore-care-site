@@ -45,6 +45,9 @@ export default function PartnershipPage() {
           <S2Button tone="deep" dialog={P.refer.actions[1]}>
             {P.refer.actions[1].label}
           </S2Button>
+          <S2Button tone="mint" dialog={P.refer.actions[2]}>
+            {P.refer.actions[2].label}
+          </S2Button>
         </div>
       </PageHero>
 

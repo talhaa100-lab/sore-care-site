@@ -1,7 +1,7 @@
 /**
  * Sends submissions from the site's lead dialog to the Sora Care CRM webhook
  * (same contract the SEO sites use, with source "Website").
- * The partnership dialog does not use this route; it emails via /api/lead.
+ * The partnership dialogs do not use this route; they post to /api/partnership.
  *
  * Environment variables (set in .env.local and in the Vercel project settings):
  *   MAKE_WEBHOOK_SECRET  secret sent as the x-make-webhook-secret header

@@ -2609,6 +2609,13 @@ html:has(.s2) {
   font-weight: 700;
   text-decoration: underline;
 }
+/* lead form: short reminder above the submit button */
+.form__note {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
 .form .btn:disabled {
   opacity: 0.65;
   cursor: progress;
