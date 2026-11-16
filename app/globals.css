@@ -1,0 +1,355 @@
+﻿@import "tailwindcss";
+
+/* ──────────────────────────────────────────────────────────────
+   SoraCare — shared base
+   Resets, the scroll-reveal helper and the "See if you qualify"
+   dialog. The visual theme (tokens, layout, components) lives in
+   site.css and is scoped under `.s2`.
+   ────────────────────────────────────────────────────────────── */
+
+:root {
+  --paper: #f5efe4;
+  --paper-2: #ece4d3;
+  --card: #fffdf8;
+  --ink: #12203a;
+  --ink-2: #22355b;
+  --accent: #ff6b3d;
+  --accent-deep: #e9531f;
+  --sage: #cddcc4;
+  --sky: #bdd7ef;
+  --sun: #ffd7b5;
+  --butter: #f5e2a0;
+
+  --line: rgb(18 32 58 / 0.12);
+
+  --font-display: var(--s2-display), "Segoe UI", system-ui, sans-serif;
+  --font-body: var(--s2-body), system-ui, sans-serif;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --radius-xl: 40px;
+  --gutter: clamp(20px, 4vw, 48px);
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  scroll-padding-top: 96px;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
+a {
+  color: inherit;
+}
+/* ───────────── buttons ───────────── */
+
+.press {
+  transition: transform 160ms var(--ease-out);
+}
+.press:active {
+  transform: scale(0.97);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 24px;
+  border-radius: 999px;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    transform 160ms var(--ease-out),
+    background-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.btn--accent {
+  background: var(--accent);
+  color: var(--ink);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.4) inset, 0 10px 24px -10px rgb(233 83 31 / 0.7);
+}
+.btn--ink {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn--paper {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.btn__arrow {
+  transition: transform 220ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn--accent:hover {
+    background: #ff7d54;
+  }
+  .btn--ink:hover {
+    background: var(--ink-2);
+  }
+  .btn:hover .btn__arrow {
+    transform: translateX(3px);
+  }
+}
+
+/* ───────────── reveal system ───────────── */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 700ms var(--ease-out),
+    transform 700ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.reveal[data-visible] {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes swap {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transform: none;
+    transition: opacity 250ms ease;
+    transition-delay: 0ms;
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+/* ───────────── dialog ───────────── */
+
+.dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(560px, calc(100% - 24px));
+  height: fit-content;
+  max-height: calc(100dvh - 24px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  overflow: visible;
+
+  /* modals stay centered — no trigger-origin here */
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(0.96) translateY(8px);
+  transition:
+    opacity 180ms var(--ease-out),
+    transform 180ms var(--ease-out),
+    overlay 180ms allow-discrete,
+    display 180ms allow-discrete;
+}
+.dialog[open] {
+  opacity: 1;
+  transform: none;
+  transition-duration: 260ms;
+}
+@starting-style {
+  .dialog[open] {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+}
+.dialog::backdrop {
+  background: rgb(18 32 58 / 0.5);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition:
+    opacity 180ms var(--ease-out),
+    overlay 180ms allow-discrete,
+    display 180ms allow-discrete;
+}
+.dialog[open]::backdrop {
+  opacity: 1;
+  transition-duration: 260ms;
+}
+@starting-style {
+  .dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.dialog[data-photo] {
+  width: min(880px, calc(100% - 24px));
+}
+.dialog__body {
+  padding: clamp(26px, 4vw, 40px);
+}
+.dialog__photo {
+  display: none;
+  position: relative;
+  min-height: 100%;
+  background: var(--paper-2);
+}
+.dialog__photo img {
+  object-fit: cover;
+}
+@media (min-width: 760px) {
+  .dialog__panel--photo {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    align-items: stretch;
+  }
+  .dialog__panel--photo .dialog__photo {
+    display: block;
+  }
+}
+.dialog__panel {
+  position: relative;
+  border-radius: 36px;
+  background: var(--paper);
+  box-shadow: 0 50px 100px -30px rgb(18 32 58 / 0.6);
+  overflow-y: auto;
+  max-height: calc(100dvh - 24px);
+}
+.dialog__close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 0;
+  background: rgb(18 32 58 / 0.08);
+  cursor: pointer;
+}
+.dialog__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  padding-right: 48px;
+}
+.form {
+  display: grid;
+  gap: 16px;
+}
+.form__row {
+  display: grid;
+  gap: 16px;
+}
+.form .btn {
+  justify-self: start;
+  margin-top: 8px;
+}
+.field {
+  display: grid;
+  gap: 6px;
+}
+.field span {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1.5px solid rgb(18 32 58 / 0.16);
+  background: var(--card);
+  font: inherit;
+  color: inherit;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+.field textarea {
+  resize: vertical;
+  min-height: 92px;
+}
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 4px rgb(255 107 61 / 0.35);
+}
+.dialog__sent {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+  padding-block: 12px;
+  animation: swap 300ms var(--ease-out) both;
+}
+.dialog__lede a {
+  font-weight: 600;
+}
+.dialog__tick {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--sage);
+}
+
+@media (min-width: 520px) {
+  .form__row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dialog,
+  .dialog[open] {
+    transform: none;
+  }
+  .dialog__sent {
+    animation: fade 200ms ease both;
+  }
+}
