@@ -2,28 +2,32 @@
   "version": 2,
   "skills": {
     "animate": {
-      "source": "emilkowalski/skill",
+      "source": "emilkowalski/skills",
+      "commit": "64eb3deb9a5fbfa041faf783e0bc3fd635872e9c",
       "sourceType": "github",
       "skillPath": "skills/animate/SKILL.md",
-      "computedHash": "60613e9badee4110074d32e1f5d8bf63b720961c2acb9eefe962cd0e591e2e58"
+      "computedHash": "c622e29fa956aea703dc4e2b8726d9a017d438beb284a60bc3fdb2540c602102"
     },
     "animate-expo": {
-      "source": "emilkowalski/skill",
+      "source": "emilkowalski/skills",
+      "commit": "64eb3deb9a5fbfa041faf783e0bc3fd635872e9c",
       "sourceType": "github",
       "skillPath": "skills/animate-expo/SKILL.md",
-      "computedHash": "3cbc0a9466a1404de98bec73eb6789257556e632f82c58319308a64ff42a5771"
+      "computedHash": "f221c9cfe03d9255ac3e2383bfb8b1481036142fe2fe9567403eb071d21092bb"
     },
     "animation-performance": {
-      "source": "emilkowalski/skill",
+      "source": "emilkowalski/skills",
+      "commit": "64eb3deb9a5fbfa041faf783e0bc3fd635872e9c",
       "sourceType": "github",
       "skillPath": "skills/animation-performance/SKILL.md",
-      "computedHash": "cbd338b7c961d1a2f2f61a30905adf1db94206595e8da593fef1b44265d5d08f"
+      "computedHash": "1ff92f577fc2b7781ed622fd4eb5e514c252cf5cb95c3661743cd127ee01290a"
     },
     "animation-vocabulary": {
-      "source": "emilkowalski/skill",
+      "source": "emilkowalski/skills",
+      "commit": "64eb3deb9a5fbfa041faf783e0bc3fd635872e9c",
       "sourceType": "github",
       "skillPath": "skills/animation-vocabulary/SKILL.md",
-      "computedHash": "1c50a737b755ff021f5216c7b89af3734ba0f9a908d0b540d3e9979f52fef3e2"
+      "computedHash": "e1d19134dc63dfb09379f7b42557b63b6123becdd36d15bae991d0b6ca5b2110"
     },
     "apple-design": {
       "source": "emilkowalski/skill",
@@ -56,10 +60,11 @@
       "computedHash": "55735a70a886326ee8ba1dd4d1ee040e4e9503a536891467e4ed7e114a69b0dd"
     },
     "find-animation-opportunities": {
-      "source": "emilkowalski/skill",
+      "source": "emilkowalski/skills",
+      "commit": "64eb3deb9a5fbfa041faf783e0bc3fd635872e9c",
       "sourceType": "github",
       "skillPath": "skills/find-animation-opportunities/SKILL.md",
-      "computedHash": "6912a27a684feba9dd220349940d8a44e0d7b720cab71042f268a7ed93bf4bab"
+      "computedHash": "9ec1c8c622b2c3caf9bda1712440e25dd4f9bc6da1207db4fa80b784aa319186"
     },
     "gestures": {
       "source": "emilkowalski/skill",
@@ -68,10 +73,11 @@
       "computedHash": "f3f78df0c0b320e9129e543106ce3b6ccd0cfb681b57ff38daaec7379993fe1a"
     },
     "improve-animations": {
-      "source": "emilkowalski/skill",
+      "source": "emilkowalski/skills",
+      "commit": "64eb3deb9a5fbfa041faf783e0bc3fd635872e9c",
       "sourceType": "github",
       "skillPath": "skills/improve-animations/SKILL.md",
-      "computedHash": "197db8a2e4a2f009ad5aeef57fb9aafbec83f9023bfff269a4bf5ede1106584a"
+      "computedHash": "5c33add82a79754bec0d7ee3376525e24e77b34575d5ae29d0c204f730356eab"
     },
     "mobile-native": {
       "source": "emilkowalski/skill",

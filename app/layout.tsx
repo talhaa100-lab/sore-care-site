@@ -28,10 +28,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable}`} data-scroll-behavior="smooth">
       <body>
         <noscript>
-          <style>{`.s2 .reveal,.s2 .s2-rise,.s2 .s2-chip,.s2 .s2-pop{opacity:1!important;transform:none!important;animation:none!important}.s2 [data-w]{opacity:1!important}.s2 .s2-a{opacity:1!important;transform:none!important}`}</style>
+          <style>{`.s2 .reveal,.s2 .s2-rise,.s2 .s2-chip,.s2 .s2-pop{opacity:1!important;transform:none!important;animation:none!important}.s2 [data-w]{opacity:1!important}.s2 .s2-a{opacity:1!important;transform:none!important}.s2 .reveal img{transform:none!important}`}</style>
         </noscript>
         <div className="s2">
           <QualifyProvider image="/site/popup-see-if-you-qualify.jpg">

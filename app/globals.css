@@ -92,7 +92,13 @@ a {
     transform 160ms var(--ease-out),
     background-color 180ms ease,
     color 180ms ease,
-    box-shadow 180ms ease;
+    box-shadow 180ms ease,
+    opacity 180ms ease;
+}
+/* sending: the button steps back instead of vanishing or flashing */
+.btn:disabled {
+  opacity: 0.65;
+  cursor: progress;
 }
 
 .btn--accent {
@@ -337,6 +343,70 @@ a {
   height: 60px;
   border-radius: 50%;
   background: var(--sage);
+  animation: tick-pop 420ms var(--ease-out) 60ms both;
+}
+
+/* success tick draws itself once; it is the one moment worth a flourish */
+.dialog__tick path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: tick-draw 420ms var(--ease-out) 220ms forwards;
+}
+@keyframes tick-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tick-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* form fields settle in just after the dialog opens (30–60ms apart, never blocks typing) */
+.dialog[open] .form > :not([aria-hidden="true"]) {
+  animation: field-in 320ms var(--ease-out) both;
+  animation-delay: 90ms;
+}
+.dialog[open] .form > :nth-child(2) {
+  animation-delay: 135ms;
+}
+.dialog[open] .form > :nth-child(3) {
+  animation-delay: 180ms;
+}
+.dialog[open] .form > :nth-child(4) {
+  animation-delay: 225ms;
+}
+.dialog[open] .form > :nth-child(n + 5) {
+  animation-delay: 270ms;
+}
+/* an error is feedback, so it appears right away */
+.dialog[open] .form > .form__error {
+  animation: swap 240ms var(--ease-out) both;
+  animation-delay: 0ms;
+}
+@keyframes field-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes field-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @media (min-width: 520px) {
@@ -351,5 +421,17 @@ a {
   }
   .dialog__sent {
     animation: fade 200ms ease both;
+  }
+  .dialog__tick {
+    animation: none;
+  }
+  .dialog__tick path {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+  .dialog[open] .form > :not([aria-hidden="true"]),
+  .dialog[open] .form > .form__error {
+    animation: field-fade 200ms ease both;
+    animation-delay: 0ms;
   }
 }

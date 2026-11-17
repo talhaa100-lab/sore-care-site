@@ -391,6 +391,43 @@ html:has(.s2) {
   border-bottom: 0;
   color: var(--teal);
 }
+/* menu links drop in right after the sheet starts opening; closing is quick and un-staggered */
+.s2-sheet__link {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity 120ms ease-out,
+    transform 120ms ease-out;
+}
+.s2-sheet[data-open] .s2-sheet__link {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 260ms var(--ease-out) 90ms,
+    transform 260ms var(--ease-out) 90ms;
+}
+.s2-sheet[data-open] .s2-sheet__link:nth-child(2) {
+  transition-delay: 130ms;
+}
+.s2-sheet[data-open] .s2-sheet__link:nth-child(3) {
+  transition-delay: 170ms;
+}
+.s2-sheet[data-open] .s2-sheet__link:nth-child(4) {
+  transition-delay: 210ms;
+}
+.s2-sheet[data-open] .s2-sheet__link:nth-child(5) {
+  transition-delay: 250ms;
+}
+.s2-sheet[data-open] .s2-sheet__link:nth-child(n + 6) {
+  transition-delay: 290ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .s2-sheet__link,
+  .s2-sheet[data-open] .s2-sheet__link {
+    transform: none;
+    transition-delay: 0ms;
+  }
+}
 
 @media (min-width: 980px) {
   .s2-links {
@@ -1758,6 +1795,35 @@ html:has(.s2) {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* the portrait settles into its arch as the hero rises */
+  animation: s2-settle 1200ms var(--ease-out) 120ms both;
+}
+@keyframes s2-settle {
+  from {
+    transform: scale(1.06);
+  }
+}
+
+/* photos in scroll-revealed frames settle too (the frame already clips them) */
+.s2-banner.reveal img,
+.s2-refer__photo.reveal img {
+  transform: scale(1.05);
+  transition: transform 1100ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.s2-banner.reveal[data-visible] img,
+.s2-refer__photo.reveal[data-visible] img {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .s2-frame img {
+    animation: none;
+  }
+  .s2-banner.reveal img,
+  .s2-refer__photo.reveal img {
+    transform: none;
+    transition: none;
+  }
 }
 
 /* ───────────── shared bits ───────────── */
